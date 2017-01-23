@@ -1,0 +1,3 @@
+[09-Nov-2016 03:03:32 UTC] PHP Fatal error:  Call to a member function userdata() on a non-object in /home/hims/public_html/api-c/application/controllers/Consultation.php on line 72
+[09-Nov-2016 17:34:04 UTC] PHP Fatal error:  Call to undefined function element() in /home/hims/public_html/development/hospital/api/application/controllers/Appointment.php on line 112
+[09-Nov-2016 17:35:34 UTC] PHP Fatal error:  Call to undefined function convert_tgl() in /home/hims/public_html/development/hospital/api/application/controllers/Appointment.php on line 120
