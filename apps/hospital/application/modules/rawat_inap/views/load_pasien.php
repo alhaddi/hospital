@@ -210,6 +210,15 @@
 							</div>
 						</div>
 					<div class="col-sm-6">
+					<?php 		$auto_rawat = $this->db->query("SELECT ifnull((MAX(no_rawat)+1),1) as auto_rm FROM `trs_rawat_inap`")->row_array(); 
+						$rm								= element('auto_rm',$auto_rawat);
+						$nora				= str_pad($rm, 8, "0", STR_PAD_LEFT); ?>
+						<div class="form-group">
+							<label for="textfield" class="control-label col-sm-4">No Register</label>
+							<div class="col-sm-8">
+								<input type="text" readonly class="form-control" value="<?=$nora?>">
+							</div>
+						</div>
 						<div class="form-group">
 							<label for="textfield" class="control-label col-sm-4">Asal Pasien</label>
 							<div class="col-sm-8">

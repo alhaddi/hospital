@@ -106,7 +106,7 @@ class Pasien_model extends MY_Model {
 	function get_datatables()
 	{
 		$this->_get_datatables_query();
-		$this->db->select("ms_pasien.*,ms_kamar.tarif,trs_rawat_inap.add_time as tgl_daftar,ms_kamar.nama as nama_kamar,ms_ruang.nama as nama_ruang");
+		$this->db->select("ms_pasien.*,ms_kamar.tarif,trs_rawat_inap.pulang,trs_rawat_inap.keterangan as ket,trs_rawat_inap.cara_pulang,trs_rawat_inap.tanggal_pulang,trs_rawat_inap.id as id_rawat_inap,trs_rawat_inap.add_time as tgl_daftar,ms_kamar.nama as nama_kamar,ms_ruang.nama as nama_ruang");
 		if($_POST["length"] != -1)
 		{
 			$this->db->limit($_POST["length"], $_POST["start"]);

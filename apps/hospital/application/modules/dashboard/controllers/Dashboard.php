@@ -33,13 +33,14 @@
 			$search = ($_GET['q'])?strip_tags(trim($_GET['q'])):'';
 			
 			$w=" AND (rm LIKE '%$search%' OR nama_lengkap LIKE '%$search%')";
-			$pasien=$this->db->query("SELECT a.id,a.rm,a.nama_lengkap FROM ms_pasien a,trs_appointment b WHERE a.id=b.id_pasien AND b.id_jenis_appointment='1' $w")->result();
+			$pasien=$this->db->query("SELECT a.id,a.rm,a.nama_lengkap,b.id_jenis_appointment FROM ms_pasien a,trs_appointment b WHERE a.id=b.id_pasien $w")->result();
 			$found=count($pasien);
 			if($found > 0)
 			{
 					foreach($pasien as $r){
+						$app=($r->id_jenis_appointment == 1)?'Rawat Jalan':'IGD';
 						$p['id']=$r->id;
-						$p['text']=$r->rm." - ".$r->nama_lengkap;
+						$p['text']=$r->rm." - ".$r->nama_lengkap." [$app]";
 						$p['nama']=$r->nama_lengkap;
 						$data[]=$p;
 					}

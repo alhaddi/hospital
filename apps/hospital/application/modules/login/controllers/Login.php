@@ -19,6 +19,16 @@
 			$data['identitas'] = $this->db->get('ms_identitas')->row();
 			$data['login_url'] = site_url('login/login_process');
 			$this->load->view($this->folder.'login',$data);
+		}		
+		public function dashboard(){
+			$this->template->display2($this->folder.'dashboard');
+		}
+		
+		public function searchPatient(){
+			$patient = $this->input->post('nama_lengkap');
+			$data = $this->db->query("SELECT a.id,a.nama_lengkap,a.rm,a.alamat,c.nama as ruang_rawat,b.pulang FROM ms_pasien a,trs_rawat_inap b,ms_ruang c WHERE b.id_ruang=c.id AND a.id=b.id_pasien AND (a.nama_lengkap LIKE '%$patient%' OR a.rm LIKE '%$patient%') ORDER BY b.add_time DESC")->result();
+						 
+			echo json_encode($data);
 		}
 		
 		

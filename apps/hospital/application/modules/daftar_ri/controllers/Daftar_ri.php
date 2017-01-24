@@ -73,8 +73,25 @@ class Daftar_ri extends MY_Controller
 			$tgl = convert_tgl($row->tgl_daftar,'Y-m-d');
 			$poli = ($tgl != date('Y-m-d'))?'':'';
 			$t="";
-			$fields[] = "";
+			if($row->pulang == '1'){
+				if($row->cara_pulang == 'PL'){
+					$cara_pulang="Pulang";
+				}elseif($row->cara_pulang == 'PP'){
+					$cara_pulang="Pulang Paksa";
+				}elseif($row->cara_pulang == 'RJK'){
+					$cara_pulang="Rujukan";
+				}elseif($row->cara_pulang == 'Mati1'){
+					$cara_pulang="Meninggal Sebelum 48 Jam";
+				}elseif($row->cara_pulang == 'Mati2'){
+					$cara_pulang="Meninggal Setelah 48 Jam";
+				}
+				$tgl=explode(" ",$row->tanggal_pulang);
+				$con=convert_tgl($tgl[0],"d F Y",1);
+				$fields[] = "<center><a style='cursor:pointer;' onclick='swal(\"Informasi Kepulangan\",\"Tanggal Pulang : $con ($tgl[1]) <br>Cara Pulang : $cara_pulang <br>Keterangan : $row->ket \",\"info\")'>-- Pulang --</a></center>";
+			}else{
+			$fields[] = "<a data-toggle='modal' href='#myModal' onclick='$(\"#id_trs_rawat_inap\").val($row->id_rawat_inap);' class='btn btn-danger'><i class='fa fa-sign-out'></i></a>";
 			ini_set('memory_limit', '-1');
+			}
 			$data[] = $fields;
 		}
 
@@ -86,6 +103,33 @@ class Daftar_ri extends MY_Controller
 		);
 
 		echo json_encode($output);
+	}
+	
+	function save_pulang(){
+		$post=$this->input->post(NULL,TRUE);
+		$ex=explode(" ",element("tpulang",$post));
+		$tgl=explode("/",$ex[0]);
+		$data['tanggal_pulang']=$tgl[2]."-".$tgl[1]."-".$tgl[0]." ".$ex[1];
+		$data['cara_pulang']=element("cara_keluar",$post);
+		$data['pulang']=1;
+		$data['keterangan']=element("keterangan",$post);
+		$this->db->where("id",element('id_rawat_inap',$post));
+		$this->db->update("trs_rawat_inap",$data);
+		
+		$json['status']=true;
+		echo json_encode($json);
+	}
+
+	public function dashboard(){
+			$this->template->display('dashboard');
+		}
+		
+	public function searchPatient(){
+			$patient = $this->input->post('nama_lengkap');
+			$this->db->like('nama_lengkap',$patient,'LEFT');
+			$data = $this->db->get('ms_rawat_inap')->result();
+						 
+			echo json_encode($data);
 	}
 	
 	function history_poli($id_pasien){

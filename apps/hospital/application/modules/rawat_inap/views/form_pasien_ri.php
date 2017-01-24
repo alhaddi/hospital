@@ -24,7 +24,7 @@
 							<label for="rm" class="control-label col-sm-2">No RM / Nama Pasien <span class="text-danger">*</span></label>
 							<div class="col-sm-10">
 								<select data-pasien-id="true" onchange="changedata();" class="form-control" id="id_pasien" name="id_pasien"  >
-									<option value="">-- Pencarian Pasien IGD --</option>
+									<option value="">-- Pencarian Pasien --</option>
 								</select>
 							</div>
 						</div>

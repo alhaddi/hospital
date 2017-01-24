@@ -1,0 +1,168 @@
+/*
+============== background Color====================
+*/
+.tparrows.tp-leftarrow:hover,
+.tparrows.tp-rightarrow:hover,
+.fact-counter-wrapper:before,
+.doctor-specialist,
+.filter-button-group li:hover,
+.box-resume .btn:hover,
+.fancybox-skin,
+.fancybox-nav span,
+.popular-events.media span,
+.inner-header-wraper:hover i,
+.inner-header-wraper span,
+.bg-color,
+.event-calender,
+.schedule .nav-tabs > li,
+.classes-listing-wrap figure span,
+#feed-group .feed-panel .feed-text.silver-tree-background,
+#feed-group .feed-panel i.fa,
+.quote:after,
+.sidebar-widget .widget-tag li a:hover,
+.pagination-nav ul li.active a,
+.pagination-nav ul li:hover a,
+.item-nav .item-prev:hover .prev-btn,
+.item-nav .item-next:hover .next-btn,
+.blog-post .post-more-link:hover .btn-color-line,
+.blog-date,
+.ui-input-group .input-bar:before,
+.ui-input-group .input-bar:after,
+.ui-input-group .input-bar:before,
+.ui-input-group .input-bar:after,
+#ui-datepicker-div .ui-widget-header,
+.ui-datepicker-calendar .ui-state-hover,
+.ui-datepicker-calendar .ui-widget-content .ui-state-hover,
+.ui-datepicker-calendar .ui-widget-header .ui-state-hover,
+.modal-content button.close,
+.header-2 .primary-header,
+.main-banner .more-btn,
+.btn-color-line:hover,
+.top-bar-section,
+.nf-carousel-theme .owl-controls .owl-buttons .owl-prev,
+.nf-carousel-theme .owl-controls .owl-buttons .owl-next {
+  background: #19b5fe;
+}
+.ui-datepicker-prev,
+.ui-datepicker-next {
+  background: #0178b0 !important;
+}
+.filter-button-group {
+  background: #32bdfe;
+}
+.page-signin .body-inner:before {
+  background-color: #19b5fe;
+}
+.header-2 .navigation > ul > li:hover,
+.schedule .nav-tabs > li:hover,
+.schedule .nav-tabs > li.active,
+.nf-carousel-theme .owl-controls .owl-buttons .owl-prev:hover,
+.nf-carousel-theme .owl-controls .owl-buttons .owl-next:hover {
+  background: #019be3;
+}
+.navigation .sub-nav,
+.overlay-bg-color:before,
+#feed-group .feed-panel .feed-text.roti-background,
+.appointment {
+  background-color: rgba(25, 181, 254, 0.8);
+}
+.team-item-img .team-item-detail,
+.gallery-item-img .gallery-item-detail {
+  background-color: rgba(25, 181, 254, 0.7);
+}
+.why-choose > div:nth-child(1) {
+  background: #0178b0;
+}
+.why-choose > div:nth-child(2) {
+  background: #019be3;
+}
+.why-choose > div:nth-child(3) {
+  background: #01567d;
+}
+.why-choose > div:nth-child(4) {
+  background: #018aca;
+}
+/*
+============== Text Color====================
+*/
+.team-item-img .team-item-detail .team-item-detail-inner .social li a,
+.accordion-title.active,
+.accordion-title:hover,
+.event_time i,
+.popular-events.media p a:hover,
+.line-box i,
+.icon-arrow,
+.video-btn:hover,
+.contact .icon-circle,
+.mapmarker .ion-ios-location,
+.sidebar-widget ul li a:hover,
+.pagination-nav ul li a,
+.item-nav .item-prev .prev-btn,
+.item-nav .item-next .next-btn,
+.blog-post .fa-tag,
+.form-field-wrapper i,
+.color-primary,
+a.color-primary,
+.ui-input-group > input:focus ~ label,
+.ui-input-group > textarea:focus ~ label,
+.custom-check:before,
+.big-font i,
+.ui-datepicker-calendar .ui-state-default,
+.ui-datepicker-calendar .ui-widget-content .ui-state-default,
+.ui-datepicker-calendar .ui-widget-header .ui-state-default,
+.modal-body .form-group i,
+a:hover,
+.btn-color-line,
+.btn-white-line:hover,
+.top-social-icon a.btn:hover,
+.header-2 .top-bar-section.top-bar-bg-color a:hover,
+.call-us ul li a:hover {
+  color: #19b5fe;
+}
+.widget-tag li a {
+  color: #19b5fe !important;
+}
+.quote:before {
+  color: rgba(25, 181, 254, 0.8);
+}
+/*
+============== Border Color====================
+*/
+.line-box i {
+  box-shadow: 0 0px 0px 1px #19b5fe inset;
+}
+.inner-header-wraper:hover i {
+  box-shadow: 0 0px 0px 46px #19b5fe inset;
+}
+.tparrows.tp-leftarrow:hover,
+.tparrows.tp-rightarrow:hover,
+.box-resume,
+.video-btn:hover,
+.contact-form input[type="text"]:focus,
+.contact-form textarea:focus,
+.contact .icon-circle,
+.widget-search input[type="text"]:focus,
+.blog-post-hr input[type="text"]:focus,
+.blog-post-hr textarea:focus,
+.widget-tag li a,
+.pagination-nav ul li a,
+.item-nav .item-prev .prev-btn,
+.item-nav .item-next .next-btn,
+.appointment-section .input-sm,
+.custom-check,
+.btn-color-line {
+  border-color: #19b5fe;
+}
+.btn-link-a:hover {
+  border-bottom: 1px solid #19b5fe !important;
+}
+.header-2 .navigation > ul > li,
+.timing li {
+  border-color: #019be3;
+}
+@media (max-width: 767px) {
+  .navigation,
+  .book-app {
+    background: #19b5fe;
+  }
+}
