@@ -10,7 +10,6 @@
 
 
 <div class="container-fluid">
-	<form  class='form-horizontal' data-plugin="form-validation" data-redirect="<?=site_url('pasien')?>" id="form_<?=$id_table?>" action="<?=site_url($link_save)?>" method="POST">
 		<input type="hidden" name="id">
 		<div class="box box-bordered box-color">
 			<div class="box-title">
@@ -32,6 +31,8 @@
 								<input type="text" class='form-control' id="key" name="key" placeholder="Masukan nomor dengan lengkap.">
 							</div>
 						</div>
+						<br>
+						<br>
 						<center><button type="button" class='btn btn-info' id="b1" onclick="caripasien()"><i class="fa fa-search"></i> Cari Pasien..</button><button style="display:none;" type="button" class='btn btn-danger' id="b2" ><i class="fa fa-spin fa-spinner"></i> Silahkan tunggu..</button></center>
 					</div>
 					<hr>
@@ -39,7 +40,6 @@
 					</div>
 			</div>
 		</div>		
-	</form>
 </div>
 
 <script>

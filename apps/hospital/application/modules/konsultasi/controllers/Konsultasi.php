@@ -599,16 +599,24 @@
 			$this->db->where('id',element('id',$post))->update('trs_konsultasi',$konsultasi);
 			
 			if(!empty($konsultasi['status_kondisi_akhir'])){
-				$pas=$this->db->query("SELECT no_sep,ppkPelayanan FROM ms_pasien WHERE id='".element('id_pasien',$post)."'")->row_array();
+				$pas=$this->db->query("SELECT no_sep,ppkPelayanan,id FROM ms_pasien WHERE id='".element('id_pasien',$post)."'")->row_array();
 				if(!empty($pas['no_sep'])){
+					$no_sep=$pas['no_sep'];
+					$ppkPelayanan=$pas['ppkPelayanan'];
+			
+					$d=date("Y-m-d h:i:s");
+					$g=$this->db->query("SELECT * FROM riwayat_sep WHERE id_pasien='".$id_pasien->id."' ORDER BY id DESC LIMIT 1")->row();
+					
+					$this->db->query("UPDATE riwayat_sep SET tanggal_pulang='$d' WHERE id='$g->id'");
+				
 				$head=header_bpjs(); //FUNGSI BUAT AMBIL HEADER ADA DI get_field helper di core
 				$domain=ws_url(); 	// FUNGSI BUAT SETTING DOMAIN WS BPJS ADA DI CONFIG.PHP
 				$link=url_bpjs("update_tglpulang_sep"); //FUNGSI BUAT AMBIL URL KATALOG ADA DI get_field helper di core
 				$full_url=$domain.$link->link;
 				
-					$bpjs["request"]["t_sep"]["noSep"]=$pas['no_sep'];
+					$bpjs["request"]["t_sep"]["noSep"]=$no_sep;
 					$bpjs["request"]["t_sep"]["tglPlg"]=date("Y-m-d h:i:s");
-					$bpjs["request"]["t_sep"]["ppkPelayanan"]=$pas['ppkPelayanan'];
+					$bpjs["request"]["t_sep"]["ppkPelayanan"]=$ppkPelayanan;
 					$data_json = json_encode($bpjs,JSON_PRETTY_PRINT);
 			
 				$head[]='Content-Type: application/x-www-form-urlencoded';
@@ -623,6 +631,10 @@
 					$json=curl_exec($ch);
 					curl_close ($ch);
 					$result=json_decode($json);
+					$up['no_sep']=null;
+					$up['ppkPelayanan']=null;
+					$this->db->where("id",$pas['id']);
+					$this->db->update("ms_pasien",$up);
 				}
 
 			}

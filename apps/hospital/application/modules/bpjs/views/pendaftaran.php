@@ -64,13 +64,17 @@
 										<div class="form-group">
 											<label for="password" class="control-label col-sm-2">PPK Rujukan</label>
 											<div class="col-sm-10">
-												<input type="text" value="<?=(empty($rujukan->response->item->noKunjungan))?'':substr($rujukan->response->item->noKunjungan,0,8);?>" name="ppkRujukan" id="ppkRujukan" placeholder="" class="form-control" >
+											<select data-rujukan-id="true" class="form-control" id="ppkRujukan" name="ppkRujukan"  >
+												<option value="">-- Pencarian PPK Rujukan --</option>
+											</select>
 											</div>
 										</div>
 										<div class="form-group">
 											<label for="textfield" class="control-label col-sm-2">PPK Pelayanan</label>
 											<div class="col-sm-10">
-												<input type="text" name="ppkPelayanan"  value="<?=(empty($rujukan->response->item->noKunjungan))?'':substr($rujukan->response->item->noKunjungan,12,8);?>" id="ppkPelayanan" placeholder="" class="form-control" >
+											<select data-rujukan2-id="true" class="form-control" id="ppkPelayanan" name="ppkPelayanan"  >
+												<option value="1024R001">1024R001 - RSUD DR SLAMET GARUT - TASIKMALAYA</option>
+											</select>
 											</div>
 										</div>
 										<div class="form-group">
@@ -127,7 +131,7 @@
 											<div class="col-sm-10">
 												<select name='poliTujuan' class="form-control" id='poliTujuan'>
 													<?php foreach($poli as $r){ ?>
-														<option value='<?=$r['id']?>'>(<?=$r['code']?>) <?=$r['nama']?></option>
+														<option value='<?=$r['id']?>_<?=$r['code']?>'>(<?=$r['code']?>) <?=$r['nama']?></option>
 													<?php } ?>
 												</select>
 											</div>
@@ -211,6 +215,70 @@
 		}
 	}
 	$(document).ready(function(){
+		
+		$('#ppkRujukan').select2();
+		
+		if($('[data-rujukan-id="true"]').length > 0) {
+			$('[data-rujukan-id="true"]').each(function(){
+				var id = $(this).attr('id');
+				$('#'+id).select2({
+					minimumInputLength: 4,
+					ajax: {
+						url: '<?=site_url('bpjs/get_provider')?>',
+						dataType: 'json',
+						data: function (params) {
+							return {
+								q: params.term, // search term
+								//page: params.page,
+							};
+						},
+						processResults: function (data,params) {
+							params.page = params.page || 1;
+							return {
+								results: data.items,
+								//pagination: {
+								//	more: (params.page * 30) < data.total_count
+								//}
+							};
+						},
+						cache: true
+					}
+				});
+			});
+		}
+			
+		$('#ppkPelayanan').select2();
+		
+		if($('[data-rujukan2-id="true"]').length > 0) {
+			$('[data-rujukan2-id="true"]').each(function(){
+				var id = $(this).attr('id');
+				$('#'+id).select2({
+					minimumInputLength: 4,
+					ajax: {
+						url: '<?=site_url('bpjs/get_provider')?>',
+						dataType: 'json',
+						data: function (params) {
+							return {
+								q: params.term, // search term
+								//page: params.page,
+							};
+						},
+						processResults: function (data,params) {
+							params.page = params.page || 1;
+							return {
+								results: data.items,
+								//pagination: {
+								//	more: (params.page * 30) < data.total_count
+								//}
+							};
+						},
+						cache: true
+					}
+				});
+			});
+		}
+		
+	
 		var select_options = {
 			ajax: {
 				url: '<?=site_url('konsultasi/json_diagnosa')?>',

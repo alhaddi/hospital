@@ -48,6 +48,7 @@ class Bpjs extends MY_Controller
 		$json=curl_exec($ch);
 		curl_close ($ch);
 		$result=json_decode($json);
+		if($result){
 		if($result->metadata->code == 200){
 					$link=url_bpjs("rujukan_peserta");
 					$full_url=$domain.$link->link.$result->response->peserta->noKartu;
@@ -73,7 +74,10 @@ class Bpjs extends MY_Controller
 		}else{
 			echo "<center><h2>Permintaan Gagal!</h2><label class='label label-info' style='font-size:16px;'><b>".$result->metadata->message."</b></label></center>";
 		}
-		
+		}else{
+			
+			echo "<center><h2>Permintaan Gagal!</h2><label class='label label-info' style='font-size:16px;'><b>Jaringan lambat, silahkan coba kembali.</b></label></center>";
+		}
     }
 		
 	public function save(){
@@ -83,7 +87,7 @@ class Bpjs extends MY_Controller
 		
 		$auto_rm = $this->db->query("SELECT ifnull((MAX(rm)+1),1) as auto_rm FROM ms_pasien")->row_array();
 		
-		$rm							= (!empty(element('id',$cekrm)))?element('id',$cekrm):element('auto_rm',$auto_rm);
+		$rm							= (!empty($cekrm['id']))?$cekrm['id']:element('auto_rm',$auto_rm);
 		/* DISINI BUAT MASUKIN DATA PASIEN KE SERVER RS */
 		$pasien['rm']				= str_pad($rm, 6, "0", STR_PAD_LEFT); 
 		$pasien['nama_lengkap']		= element('nama_lengkap',$post);
@@ -94,9 +98,12 @@ class Bpjs extends MY_Controller
 		$pasien['no_rujukan']		= element('noRujukan',$post);
 		$pasien['rujukan_dari']		= element('ppkRujukan',$post);
 		$pasien['ppkPelayanan']		= element('ppkPelayanan',$post);
+		$pasien['nokartubpjs']		= element('no_kartu',$post);
 		/* SAMPAI SINI */
 		
-		/* INI BUAT INSERT SEP 
+		$poli=explode('_',element('poliTujuan',$post));
+		
+		// INI BUAT INSERT SEP 
 			$head=header_bpjs(); //FUNGSI BUAT AMBIL HEADER ADA DI get_field helper di core
 
 			
@@ -113,7 +120,7 @@ class Bpjs extends MY_Controller
 			$bpjs["request"]["t_sep"]["jnsPelayanan"]=element('jnsPelayanan',$post);
 			$bpjs["request"]["t_sep"]["catatan"]=element('catatan',$post);
 			$bpjs["request"]["t_sep"]["diagAwal"]=element('diagAwal',$post);
-			$bpjs["request"]["t_sep"]["poliTujuan"]=element('poliTujuan',$post);
+			$bpjs["request"]["t_sep"]["poliTujuan"]=$poli[1];
 			$bpjs["request"]["t_sep"]["klsRawat"]=element('klsRawat',$post);
 			$bpjs["request"]["t_sep"]["lakaLantas"]=element('lakaLantas',$post);
 			$bpjs["request"]["t_sep"]["lokasiLaka"]=element('lokasiLaka',$post);
@@ -133,12 +140,14 @@ class Bpjs extends MY_Controller
 			$json=curl_exec($ch);
 			curl_close ($ch);
 			$result=json_decode($json);
-		
+			if($result){
 			$hasil=$result->metadata->code;
 			$response=$result->response;
-		/* SAMPAI SINI */
+		/* SAMPAI SINI
+		$result=true;
+		if($result){
 			$hasil=200;
-			$response=9999;
+			$response=9999; */
 		//debug doang
 		
 		
@@ -170,7 +179,7 @@ class Bpjs extends MY_Controller
 		
 		$this->db->trans_start();
 		$p=element('jnsPelayanan',$post);
-		if($p == 2){
+		if($p == 1){
 		$auto_rawat = $this->db->query("SELECT ifnull((MAX(no_rawat)+1),1) as auto_rm FROM `trs_rawat_inap`")->row_array();
 		
 		$rm								= element('auto_rm',$auto_rawat);
@@ -185,10 +194,10 @@ class Bpjs extends MY_Controller
 		$ins['no_bpjs'] 				= element('no_kartu',$post);
 		$ins = array_filter($ins);
 			
-			$this->db->insert('trs_rawat_inap',$ins);
+			$this->db->insert('trs_rawat_inap'.$p,$ins);
 		}
 			$insert['id_pasien'] = $id_pasien;
-			if(element('poliTujuan',$post) == 20 OR element('poliTujuan',$post) == 28){
+			if($poli[0] == 20 OR $poli[0] == 28){
 				$insert['id_jenis_appointment'] =2;
 				$p=2;
 				$id_komponen=2;
@@ -205,7 +214,7 @@ class Bpjs extends MY_Controller
 					$id_komponen=1;
 				}
 			}
-			$insert['id_poliklinik'] = element('poliTujuan',$post);
+			$insert['id_poliklinik'] = $poli[0];
 			$insert['id_cara_bayar'] = 2;
 			$insert['id_bpjs_type'] = 6;
 			$insert['no_bpjs'] = element('no_kartu',$post);
@@ -213,8 +222,13 @@ class Bpjs extends MY_Controller
 
 			$this->db->insert('trs_appointment',$insert);
 			$id_appointment = $this->db->insert_id();
-			$this->db->where('id',element('id_pasien',$post))->update('ms_pasien',array('arrived_at'=>date('Y-m-d H:i:s')));
 			
+			$up['id_pasien']=$id_pasien;
+			$up['no_sep']=$response;
+			$up['ppkPelayanan']=element('ppkPelayanan',$post);
+			$this->db->insert("riwayat_sep",$up);
+			
+			$this->db->where('id',$id_pasien)->update('ms_pasien',array('arrived_at'=>date('Y-m-d H:i:s')));
 			if( $this->db->affected_rows() > 0 )
 			{
 				$no_tagihan = $this->Billing_model->no_tagihan();
@@ -239,30 +253,72 @@ class Bpjs extends MY_Controller
 					$this->db->insert('trs_konsultasi',$data_konsultasi);
 			
 			$this->db->trans_complete();
-			if ($this->db->trans_status() === FALSE)
-			{
-				return false;
-			}
-			else
-			{
-				return true;
-			}
-			}
-					
 					$response = array(
 						'status' => true,
 						'message' => 'Pasien baru dengan :<br>RM : '.$pasien['rm'].' <br> Nama : '.element('nama_lengkap',$post).' <br>telah berhasil di tambahkan',
 						'redirect' => site_url('pasien').'?p='.$p
 					);
 					die(json_encode($response));
+			}
+					
+
 		}
 		else{
 					$response = array(
 						'status' => false,
-						'message' => 'NO SEP gagal di proses, transaksi tidak berhasil'
+						'message' => 'NO SEP gagal di proses, transaksi tidak berhasil.<br>Kode Kesalahan : '.$hasil.' - '.$result->metadata->message
 					);
 					die(json_encode($response));
 		}
+			}else{
+				$response = array(
+						'status' => false,
+						'message' => 'Koneksi lambat silahkan coba kembali.'
+					);
+					die(json_encode($response));
+			}
 	}
+			
+		function get_provider(){
+			$search = ($_GET['q'])?strip_tags(trim($_GET['q'])):'';
+			$head=header_bpjs();
+		
+		$domain=ws_url();
+		$link=url_bpjs("provider");
+		$full_url=$domain.$link->link."query?nama=$search&start=0&limit=100";
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_URL, $full_url);
+		curl_setopt($ch, CURLOPT_HTTPHEADER, $head);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		$json=curl_exec($ch);
+		curl_close ($ch);
+		$res=json_decode($json);
+		
+			if($res)
+			{
+					foreach($res->response->list as $r){
+						$p['id']=$r->kdProvider;
+						$p['text']=$r->kdProvider." - ".$r->nmProvider." - ".$r->nmCabang;
+						$p['nama']=$r->nmProvider;
+						$data[]=$p;
+					}
+			} 			
+			else 
+			{
+				$data[] = array(
+					'id' => '',
+					'text' => 'Data tidak ditemukan.',
+					'nama' => 'Data tidak ditemukan.',
+				);
+			
+			}
+			
+			$result['items'] = $data;
+			// return the result in json
+			echo json_encode($result); 
+		}
+		
+
+	
 }
 ?>

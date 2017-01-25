@@ -309,7 +309,54 @@ class Billing extends MY_Controller
 		$post = $this->input->post(NULL,TRUE);
 		$id_appointment=$this->db->query("SELECT id_appointment as id FROM trs_billing WHERE id='".$post['id']."'")->row();
 		$date=date("Y-m-d h:i:s");
-		$id_pasien=$this->db->query("SELECT id_pasien as id FROM trs_appointment WHERE id='".$id_appointment->id."'")->row();
+		$id_pasien=$this->db->query("SELECT id_pasien as id,id_cara_bayar FROM trs_appointment WHERE id='".$id_appointment->id."'")->row();
+		$hap='n';
+			if($id_pasien->id_cara_bayar == 2){
+
+				$pas=$this->db->query("SELECT no_sep,ppkPelayanan FROM ms_pasien WHERE id='".$id_pasien->id."'")->row_array();
+				
+				if(!empty($pas['no_sep'])){
+					$no_sep=$pas['no_sep'];
+					$ppkPelayanan=$pas['ppkPelayanan'];
+					
+				}else{
+					$date=date("Y-m-d");
+					$g=$this->db->query("SELECT * FROM riwayat_sep WHERE add_time LIKE '%$date%' and id_pasien='".$id_pasien->id."' LIMIT 1")->row();
+					$no_sep=$g->no_sep;
+					$ppkPelayanan=$g->ppkPelayanan;
+					$hap='y';
+				}
+				if(!empty($no_sep)){
+				$head=header_bpjs(); //FUNGSI BUAT AMBIL HEADER ADA DI get_field helper di core
+				$domain=ws_url(); 	// FUNGSI BUAT SETTING DOMAIN WS BPJS ADA DI CONFIG.PHP
+				$link=url_bpjs("delete_sep"); //FUNGSI BUAT AMBIL URL KATALOG ADA DI get_field helper di core
+				$full_url=$domain.$link->link;
+				
+					$bpjs["request"]["t_sep"]["noSep"]=$no_sep;
+					$bpjs["request"]["t_sep"]["ppkPelayanan"]=$ppkPelayanan;
+					$data_json = json_encode($bpjs,JSON_PRETTY_PRINT);
+			
+				$head[]='Content-Type: application/x-www-form-urlencoded';
+				$head[]='Content-Length: ' . strlen($data_json);
+			
+					$ch = curl_init();
+					curl_setopt($ch, CURLOPT_URL, $full_url);                                              
+					curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
+					curl_setopt($ch, CURLOPT_POSTFIELDS, $data_json); 
+					curl_setopt($ch, CURLOPT_HTTPHEADER, $head);
+					curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+					$json=curl_exec($ch);
+					curl_close ($ch);
+					$result=json_decode($json);
+				}
+
+			}
+			else{
+				$result=true;
+			}
+			if($result){
+		
+		
 		$this->db->query("INSERT INTO ms_pasien_batal (rm, foto, IC_Number, nama_ayah, telp_emergency, golongan_darah, id_agama, id_pekerjaan, nama_lengkap, tipe_identitas, no_identitas, jk, tempat_lahir, tanggal_lahir, usia, status_menikah, nama_orangtua, asal_pasien, no_rujukan, rujukan_dari, hp, tlp, email, alamat, rt, rw, id_wilayah, kelurahan, `status`, arrived_at, add_time, last_update, last_user) SELECT rm, foto, IC_Number, nama_ayah, telp_emergency, golongan_darah, id_agama, id_pekerjaan, nama_lengkap, tipe_identitas, no_identitas, jk, tempat_lahir, tanggal_lahir, usia, status_menikah, nama_orangtua, asal_pasien, no_rujukan, rujukan_dari, hp, tlp, email, alamat, rt, rw, id_wilayah, kelurahan, `status`, arrived_at, '".$date."', '".$date."', last_user FROM `ms_pasien` WHERE id='".$id_pasien->id."' ");
 		$idp=$this->db->insert_id();
 		
@@ -327,6 +374,10 @@ class Billing extends MY_Controller
 			if($cek == 0){
 			$this->db->where("id",$id_pasien->id);
 			$this->db->delete('ms_pasien');
+			if($hap=='y'){
+				$this->db->query("DELETE FROM riwayat_sep WHERE id='$g->id'");
+			}
+			}
 			}
 		}
 		
